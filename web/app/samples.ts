@@ -11,36 +11,33 @@ export const hoyoverse = `talk = |name, to| {
         "Hello, " + to
     }
     name + ": " + msg
-}
+};
 
 people = [
     ("Pardofelis", "Mei"),
     ("Focalors", "Neuvillette"),
     ("Acheron", "Aventurine"),
     ("Burnice", "Caesar"),
-    ("FelysNeko", __elysia__)
-]
+    ("FelysNeko", rust __elysia__),
+];
 
-conversations = ""
 for (name, to) in people {
-    conversations += (talk(name, to) + "\\n")
+    print talk(name, to);
 }
-
-return conversations
 `;
 
-export const elysia = `// The motivation is of this entire project is to create a language where 
+export const elysia = `// The motivation of this entire project is to create a language where 
 // Elysia exists, so regardless of how this project evolves in the future,
 // there must exist a built-in identifier named \`__elysia__\`.
 
-name = ("爱莉希雅", "Elysia")
-nickname = __elysia__
-birthday = "Nov. 11th"
+name = ("爱莉希雅", "Elysia");
+nickname = rust __elysia__;
+birthday = "Nov. 11th";
 
-return (name, nickname, birthday)
+print (name, nickname, birthday)
 `;
 
 export const playground = `// Here's your playground
 `;
 
-export const author = `return __author__`;
+export const author = `print rust __author__;`;

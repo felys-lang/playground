@@ -22,13 +22,13 @@ export default function Terminal({ result, setResult }: Props) {
       <br />
 
       <div className="whitespace-pre-wrap">
-        <code>{result?.result}</code>
+        <code>{result?.stdout?.join("\n")}</code>
       </div>
 
       <br />
 
       <div className="whitespace-pre-wrap">
-        <code>{`Finished in ${result?.elapsed}`}</code>
+        <code>{result?.stderr}</code>
       </div>
     </dialog>
   );

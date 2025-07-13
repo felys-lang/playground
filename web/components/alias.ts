@@ -9,8 +9,9 @@ export type Codebase = {
 export type SetCodebase = Dispatch<SetStateAction<Codebase>>;
 
 export type Result = {
-  elapsed: string;
-  result: string;
+  params: string;
+  stdout: string[];
+  stderr: string;
 };
 
 export type SetResult = Dispatch<SetStateAction<Result | undefined>>;

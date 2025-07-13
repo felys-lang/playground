@@ -1,8 +1,17 @@
 import subprocess
 
 from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -18,10 +27,13 @@ async def execute(request: Request):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
+
     try:
         stdout, stderr = process.communicate(timeout=1)
-        response = stderr or stdout
     except subprocess.TimeoutExpired:
         process.kill()
-        return Response("timeout", status_code=504)
-    return response
+        return Response(status_code=504)
+
+    if stderr:
+        return Response(stderr, status_code=500)
+    return Response(stdout, media_type='application/json')

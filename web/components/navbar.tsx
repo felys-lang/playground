@@ -58,13 +58,20 @@ export default function Navbar({ codebase, setCodebase }: Props) {
 const executeCode = async (code: string, setResult: SetResult) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API}/execute`, {
     method: "POST",
-    body: code,
+    body: JSON.stringify({ code: code, params: {} }),
   }).catch((e) => console.log(e));
 
-  if (response && response.ok) {
-    const result: Result = await response.json();
+  if (!response) {
+    setResult({ params: "", stdout: [], stderr: "no connection" });
+    return;
+  }
+
+  if (response.ok) {
+    const result = await response.json();
     setResult(result);
+  } else if (response.status == 504) {
+    setResult({ params: "", stdout: [], stderr: "timeout" });
   } else {
-    setResult({ elapsed: "N/A", result: "Internal Server Error" });
+    setResult({ params: "", stdout: [], stderr: "unknown error" });
   }
 };

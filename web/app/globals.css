@@ -1,11 +1,15 @@
 @import "tailwindcss";
 
+@theme {
+  --color-elysia: #ffc6f4;
+}
+
 .loader {
   width: 44px;
   padding: 8px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #ffc6f5;
+  background: #ffc6f4;
   --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
   -webkit-mask: var(--_m);
   mask: var(--_m);
