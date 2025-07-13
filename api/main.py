@@ -18,7 +18,6 @@ async def execute(request: Request):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
-
     try:
         stdout, stderr = process.communicate(timeout=1)
         response = stderr or stdout

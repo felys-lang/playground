@@ -37,6 +37,6 @@ fn wrapper(i: I, depth: usize, momentum: f64, seed: usize) -> Result<Output, Str
         params.insert(i, (x.try_into()?, m.try_into()?));
     }
     let config = Config::new(params, depth, momentum, seed);
-    let output = Packrat::from(i.code).parse()?.config(config).exec()?;
+    let output = Packrat::from(i.code).parse()?.config(config).exec();
     Ok(output)
 }
