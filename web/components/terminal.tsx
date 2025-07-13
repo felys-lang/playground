@@ -12,7 +12,7 @@ export default function Terminal({ result, setResult }: Props) {
       open={result !== undefined}
       className="max-h-[40vh] w-screen fixed bottom-0 z-10 p-4 overflow-auto text-neutral-300 bg-neutral-900 border-t-2 border-black"
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center top-0 relative">
         <code className="font-bold">Felys 0.3.0</code>
         <button onClick={() => setResult(undefined)}>
           <CloseIcon />
@@ -25,9 +25,7 @@ export default function Terminal({ result, setResult }: Props) {
         <code>{result?.stdout?.join("\n")}</code>
       </div>
 
-      <br />
-
-      <div className="whitespace-pre-wrap">
+      <div className="whitespace-pre-wrap text-red-400">
         <code>{result?.stderr}</code>
       </div>
     </dialog>

@@ -9,9 +9,14 @@ export type Codebase = {
 export type SetCodebase = Dispatch<SetStateAction<Codebase>>;
 
 export type Result = {
-  params: string;
+  params: Record<number, [Matrix, Matrix]>;
   stdout: string[];
   stderr: string;
+};
+
+type Matrix = {
+  linear: number[];
+  shape: [number, number];
 };
 
 export type SetResult = Dispatch<SetStateAction<Result | undefined>>;

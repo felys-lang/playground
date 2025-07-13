@@ -62,7 +62,7 @@ const executeCode = async (code: string, setResult: SetResult) => {
   }).catch((e) => console.log(e));
 
   if (!response) {
-    setResult({ params: "", stdout: [], stderr: "no connection" });
+    setResult({ params: [], stdout: [], stderr: "no connection" });
     return;
   }
 
@@ -70,8 +70,8 @@ const executeCode = async (code: string, setResult: SetResult) => {
     const result = await response.json();
     setResult(result);
   } else if (response.status == 504) {
-    setResult({ params: "", stdout: [], stderr: "timeout" });
+    setResult({ params: [], stdout: [], stderr: "timeout" });
   } else {
-    setResult({ params: "", stdout: [], stderr: "unknown error" });
+    setResult({ params: [], stdout: [], stderr: "unknown error" });
   }
 };
