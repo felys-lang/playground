@@ -10,7 +10,7 @@ export default function Terminal({ result, setResult }: Props) {
   return (
     <dialog
       open={result !== undefined}
-      className="max-h-[40vh] w-screen fixed bottom-0 z-10 p-4 overflow-auto text-neutral-300 bg-neutral-900 border-t-2 border-black"
+      className="max-h-[40vh] w-screen fixed bottom-0 z-10 p-4 overflow-auto text-neutral-300 bg-neutral-900 border-t-1 border-black"
     >
       <div className="flex justify-between items-center top-0 relative">
         <code className="font-bold">Felys 0.3.0</code>

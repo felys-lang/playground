@@ -51,12 +51,12 @@ interface Props {
 export default function Workbench({ codebase, setCodebase }: Props) {
   return (
     <div className="flex h-[calc(100vh-100px)]">
-      <div className="hidden w-1/5 lg:block border-e-2 border-black overflow-auto">
+      <div className="hidden w-1/5 lg:block border-e-1 border-black overflow-auto">
         <ul>
           {codebase.name.map((value, key) => (
             <li key={key}>
               <button
-                className={`py-2 px-4 w-full text-start hover:bg-neutral-800${
+                className={`py-2 px-4 w-full text-start${
                   codebase.cursor === key ? " bg-neutral-800" : ""
                 }`}
                 onClick={() => setCodebase((cb) => ({ ...cb, cursor: key }))}

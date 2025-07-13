@@ -16,7 +16,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
   const [result, setResult] = useState<Result | undefined>(undefined);
 
   return (
-    <header className="flex justify-between py-4 px-4 lg:px-6 border-b-2 border-black">
+    <header className="flex justify-between py-4 px-4 lg:px-6 border-b-1 border-black">
       <div className="flex items-center space-x-4">
         <h1 className="text-xl font-bold">
           <Link href="/" className="text-elysia">
