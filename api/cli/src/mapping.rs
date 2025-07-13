@@ -1,4 +1,4 @@
-use felys::{Config, Matrix, Output};
+use felys::{Matrix, Output};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -14,36 +14,22 @@ impl From<Matrix> for M {
     fn from(value: Matrix) -> Self {
         Self {
             linear: value.linear,
-            shape: (value.shape.0, value.shape.1),
+            shape: value.shape,
         }
     }
 }
 
-impl M {
-    pub fn matrix(self) -> Result<Matrix, String> {
-        Matrix::new(self.linear, self.shape)
-    }
-}
-
-#[derive(Deserialize)]
-pub struct C {
-    params: HashMap<usize, (M, M)>,
-}
-
-impl C {
-    pub fn config(self, depth: usize, momentum: f64, seed: usize) -> Result<Config, String> {
-        let mut params = HashMap::new();
-        for (i, (x, m)) in self.params {
-            params.insert(i, (x.matrix()?, m.matrix()?));
-        }
-        Ok(Config::new(params, depth, momentum, seed))
+impl TryFrom<M> for Matrix {
+    type Error = String;
+    fn try_from(value: M) -> Result<Self, Self::Error> {
+        Matrix::new(value.linear, value.shape)
     }
 }
 
 #[derive(Deserialize)]
 pub struct I {
     pub code: String,
-    pub config: C,
+    pub params: HashMap<usize, (M, M)>,
 }
 
 #[derive(Serialize)]
@@ -56,13 +42,13 @@ pub struct O {
 impl O {
     pub fn ok(output: Output) -> Self {
         let mut params = HashMap::new();
-        for (i, (x, m)) in output.parameters {
+        for (i, (x, m)) in output.params {
             params.insert(i, (x.into(), m.into()));
         }
         Self {
             params,
             stdout: output.stdout,
-            msg: "success".to_string(),
+            msg: "".to_string(),
         }
     }
 

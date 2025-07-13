@@ -2,29 +2,41 @@ mod mapping;
 
 use crate::mapping::O;
 use clap::Parser;
-use felys::{Output, Packrat};
+use felys::{Config, Output, Packrat};
 use mapping::I;
 use serde_json::Error;
+use std::collections::HashMap;
 
 #[derive(Parser)]
 struct Args {
     json: String,
+    depth: usize,
+    momentum: f64,
+    seed: usize,
 }
 
 fn main() -> Result<(), Error> {
     let args = Args::parse();
     let i = serde_json::from_str::<I>(args.json.as_str())?;
-    let o = match run(i) {
-        Ok(output) => O::ok(output),
-        Err(msg) => O::err(msg),
-    };
+    let o = run(i, args.depth, args.momentum, args.seed);
     let result = serde_json::to_string(&o)?;
     print!("{result}");
     Ok(())
 }
 
-fn run(i: I) -> Result<Output, String> {
-    let config = i.config.config(100, 0.9, 42)?;
+fn run(i: I, depth: usize, momentum: f64, seed: usize) -> O {
+    match wrapper(i, depth, momentum, seed) {
+        Ok(output) => O::ok(output),
+        Err(msg) => O::err(msg),
+    }
+}
+
+fn wrapper(i: I, depth: usize, momentum: f64, seed: usize) -> Result<Output, String> {
+    let mut params = HashMap::new();
+    for (i, (x, m)) in i.params {
+        params.insert(i, (x.try_into()?, m.try_into()?));
+    }
+    let config = Config::new(params, depth, momentum, seed);
     let output = Packrat::from(i.code).parse()?.config(config).exec()?;
     Ok(output)
 }
