@@ -2,7 +2,6 @@
 import { useState } from "react";
 import Workbench from "@/components/workbench";
 import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
 import { author, elysia, hoyoverse, iris, playground } from "@/app/samples";
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
     <>
       <Navbar codebase={codebase} setCodebase={setCodebase} />
       <Workbench codebase={codebase} setCodebase={setCodebase} />
-      <Footer />
     </>
   );
 }

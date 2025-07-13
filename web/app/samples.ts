@@ -227,9 +227,10 @@ for (x, y) in test {
     }
     print (x, y)
 }
-`
+`;
 
-export const author = `print rust __author__;`;
+export const author = `print rust __author__;
+`;
 
 export const playground = `// Here's your playground
 `;
