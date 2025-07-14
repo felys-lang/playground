@@ -50,7 +50,7 @@ interface Props {
 
 export default function Workbench({ codebase, setCodebase }: Props) {
   return (
-    <div className="flex h-full">
+    <div className="flex h-[calc(100vh-62px)]">
       <div className="hidden w-1/5 lg:block border-e-1 border-black overflow-auto">
         <ul>
           {codebase.name.map((value, key) => (
