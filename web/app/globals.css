@@ -4,6 +4,10 @@
   --color-elysia: #ffc6f4;
 }
 
+button {
+  cursor: pointer;
+}
+
 .loader {
   width: 44px;
   padding: 8px;

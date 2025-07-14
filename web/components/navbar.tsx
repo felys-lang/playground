@@ -1,10 +1,7 @@
 "use client";
 import Link from "next/link";
 import { CollectionIcon, ExecIcon } from "@/components/icons";
-import { Codebase, Result, SetCodebase, SetResult } from "@/components/alias";
-import { useState } from "react";
-import Terminal from "@/components/terminal";
-import Selector from "@/components/selector";
+import { Codebase, Output, SetCodebase } from "@/components/alias";
 
 interface Props {
   codebase: Codebase;
@@ -12,9 +9,6 @@ interface Props {
 }
 
 export default function Navbar({ codebase, setCodebase }: Props) {
-  const [modal, setModal] = useState(false);
-  const [result, setResult] = useState<Result | undefined>(undefined);
-
   return (
     <header className="flex justify-between py-4 px-4 lg:px-6 border-b-1 border-black">
       <div className="flex items-center space-x-4">
@@ -35,43 +29,92 @@ export default function Navbar({ codebase, setCodebase }: Props) {
         </Link>
       </div>
       <div className="flex items-center space-x-4">
-        <button className="lg:hidden" onClick={() => setModal((m) => !m)}>
+        <button className="lg:hidden">
           <CollectionIcon />
         </button>
         <button
-          onClick={() => executeCode(codebase.code[codebase.cursor], setResult)}
+          onClick={() => {
+            setCodebase((cb) => {
+              const updatedPrograms = [...cb.programs];
+              updatedPrograms[cb.cursor] = {
+                ...updatedPrograms[cb.cursor],
+                output: {
+                  ...updatedPrograms[cb.cursor].output,
+                  params: {},
+                },
+              };
+              return { ...cb, programs: updatedPrograms };
+            });
+            executeCode(codebase, setCodebase);
+          }}
         >
           <ExecIcon />
         </button>
       </div>
-      <Selector
-        modal={modal}
-        setModal={setModal}
-        codebase={codebase}
-        setCodebase={setCodebase}
-      />
-      <Terminal result={result} setResult={setResult} />
     </header>
   );
 }
 
-const executeCode = async (code: string, setResult: SetResult) => {
+const executeCode = async (codebase: Codebase, setCodebase: SetCodebase) => {
+  const program = codebase.programs[codebase.cursor];
+  const code = program.code;
+  const params = program.locked ? program.output.params : {};
   const response = await fetch(`${process.env.NEXT_PUBLIC_API}/execute`, {
     method: "POST",
-    body: JSON.stringify({ code: code, params: {} }),
+    body: JSON.stringify({ code, params }),
   }).catch((e) => console.log(e));
 
   if (!response) {
-    setResult({ params: [], stdout: [], stderr: "no connection" });
+    setCodebase((cb) => {
+      const updatedPrograms = [...cb.programs];
+      updatedPrograms[cb.cursor] = {
+        ...updatedPrograms[cb.cursor],
+        output: {
+          ...updatedPrograms[cb.cursor].output,
+          stdout: [],
+          stderr: "network error",
+        },
+      };
+      return { ...cb, programs: updatedPrograms };
+    });
     return;
   }
 
   if (response.ok) {
-    const result = await response.json();
-    setResult(result);
+    const output = await response.json();
+    setCodebase((cb) => {
+      const updatedPrograms = [...cb.programs];
+      updatedPrograms[cb.cursor] = {
+        ...updatedPrograms[cb.cursor],
+        output: output,
+      };
+      return { ...cb, programs: updatedPrograms };
+    });
   } else if (response.status == 504) {
-    setResult({ params: [], stdout: [], stderr: "timeout" });
+    setCodebase((cb) => {
+      const updatedPrograms = [...cb.programs];
+      updatedPrograms[cb.cursor] = {
+        ...updatedPrograms[cb.cursor],
+        output: {
+          ...updatedPrograms[cb.cursor].output,
+          stdout: [],
+          stderr: "timeout error",
+        },
+      };
+      return { ...cb, programs: updatedPrograms };
+    });
   } else {
-    setResult({ params: [], stdout: [], stderr: "unknown error" });
+    setCodebase((cb) => {
+      const updatedPrograms = [...cb.programs];
+      updatedPrograms[cb.cursor] = {
+        ...updatedPrograms[cb.cursor],
+        output: {
+          ...updatedPrograms[cb.cursor].output,
+          stdout: [],
+          stderr: "unknown error",
+        },
+      };
+      return { ...cb, programs: updatedPrograms };
+    });
   }
 };
