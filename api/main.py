@@ -1,29 +1,31 @@
+import os
 import subprocess
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
+CLI = os.getenv('CLI')
+assert CLI
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=['*'],
+    allow_methods=['GET', 'POST'],
+    allow_headers=['*'],
 )
 
 
-@app.get("/")
+@app.get('/')
 async def root():
-    return "exec.felys.dev"
+    return 'exec.felys.dev'
 
 
 @app.post('/execute')
 async def execute(request: Request):
     json = await request.body()
     process = subprocess.Popen(
-        ['cli/target/release/cli', json, str(100), str(0.9), str(42)],
+        [CLI, json, str(100), str(0.9), str(42)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
