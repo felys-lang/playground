@@ -3,6 +3,7 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { Codebase, SetCodebase } from "./alias";
 import { LockIcon, UnlockIcon } from "./icons";
+import { useEffect, useRef } from "react";
 
 interface Props {
   codebase: Codebase;
@@ -29,11 +30,9 @@ export default function Workbench({ codebase, setCodebase }: Props) {
           ))}
         </ul>
       </div>
-      <div className="w-full lg:w-4/5 flex flex-col">
-        <div className="flex-1">
-          <VSEditor codebase={codebase} setCodebase={setCodebase} />
-        </div>
-        <div className="h-[30vh] w-full bg-neutral-900 border-t-1 border-black p-3 flex flex-col">
+      <div className="w-full lg:w-4/5 relative">
+        <VSEditor codebase={codebase} setCodebase={setCodebase} />
+        <div className="h-[30vh] w-full absolute z-20 bottom-0 bg-neutral-900 border-t-1 border-black p-3 flex flex-col">
           <div className="flex items-center justify-between">
             <code className="font-bold">Felys v0.4.0</code>
             <Lock codebase={codebase} setCodebase={setCodebase} />
