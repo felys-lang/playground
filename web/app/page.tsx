@@ -32,7 +32,7 @@ export default function Home() {
       {
         name: "iris.ely",
         code: iris,
-        locked: false,
+        locked: true,
         output: {
           params: {},
           stdout: [],

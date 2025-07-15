@@ -3,7 +3,6 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { Codebase, SetCodebase } from "./alias";
 import { LockIcon, UnlockIcon } from "./icons";
-import { useEffect, useRef } from "react";
 
 interface Props {
   codebase: Codebase;

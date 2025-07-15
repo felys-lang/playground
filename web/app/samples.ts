@@ -202,7 +202,7 @@ sequential = [
 ];
 
 epoch = 0;
-while epoch < 100 {
+while epoch < 50 {
     loss = [ 0.0; ];
     counter = 0;
     for (x, y) in iris {
