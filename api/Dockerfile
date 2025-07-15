@@ -1,10 +1,11 @@
-FROM rust:bookworm AS builder
+FROM rust:alpine AS builder
+RUN apk add --no-cache musl-dev
 
 COPY cli /app/
 WORKDIR /app
 RUN cargo update && cargo build --release
 
-FROM python:3.12-slim-bookworm
+FROM python:3.12-alpine
 
 COPY --from=builder /app/target/release/cli /app/
 COPY main.py requirements.txt /app/

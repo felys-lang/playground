@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 CLI = os.getenv('CLI')
 assert CLI
-app = FastAPI()
+app = FastAPI(root_path='/api')
 
 app.add_middleware(
     CORSMiddleware,

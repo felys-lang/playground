@@ -103,7 +103,7 @@ const executeCode = async (codebase: Codebase, setCodebase: SetCodebase) => {
   const program = codebase.programs[codebase.cursor];
   const code = program.code;
   const params = program.locked ? program.output.params : {};
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API}/execute`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API}/api/execute`, {
     method: "POST",
     body: JSON.stringify({ code, params }),
   }).catch((e) => console.log(e));
