@@ -2,7 +2,7 @@
 import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { Codebase, SetCodebase } from "./alias";
-import { LockIcon } from "./icons";
+import { LockIcon, UnlockIcon } from "./icons";
 
 interface Props {
   codebase: Codebase;
@@ -12,7 +12,7 @@ interface Props {
 export default function Workbench({ codebase, setCodebase }: Props) {
   const program = codebase.programs[codebase.cursor];
   return (
-    <div className="flex h-[calc(100vh-62px)]">
+    <div className="flex h-[calc(100vh-45px)]">
       <div className="hidden w-1/5 lg:block border-e-1 border-black overflow-auto">
         <ul>
           {codebase.programs.map((value, key) => (
@@ -54,22 +54,43 @@ export default function Workbench({ codebase, setCodebase }: Props) {
           }
         />
         <div className="h-[30vh] w-full absolute bottom-0 z-20 bg-neutral-900 border-t-1 border-black p-3 overflow-auto">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <code className="font-bold">Felys v0.4.0</code>
-            <button
-              onClick={() =>
-                setCodebase((cb) => {
-                  const updatedPrograms = [...cb.programs];
-                  updatedPrograms[cb.cursor] = {
-                    ...updatedPrograms[cb.cursor],
-                    locked: true,
-                  };
-                  return { ...cb, programs: updatedPrograms };
-                })
-              }
-            >
-              <LockIcon />
-            </button>
+            {program.locked ? (
+              <button
+                onClick={() =>
+                  setCodebase((cb) => {
+                    const updatedPrograms = [...cb.programs];
+                    updatedPrograms[cb.cursor] = {
+                      ...updatedPrograms[cb.cursor],
+                      locked: false,
+                      output: {
+                        ...updatedPrograms[cb.cursor].output,
+                        params: {},
+                      },
+                    };
+                    return { ...cb, programs: updatedPrograms };
+                  })
+                }
+              >
+                <LockIcon />
+              </button>
+            ) : (
+              <button
+                onClick={() =>
+                  setCodebase((cb) => {
+                    const updatedPrograms = [...cb.programs];
+                    updatedPrograms[cb.cursor] = {
+                      ...updatedPrograms[cb.cursor],
+                      locked: true,
+                    };
+                    return { ...cb, programs: updatedPrograms };
+                  })
+                }
+              >
+                <UnlockIcon />
+              </button>
+            )}
           </div>
           <br />
           <div className="whitespace-pre-wrap">
