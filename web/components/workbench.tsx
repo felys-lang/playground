@@ -29,79 +29,94 @@ export default function Workbench({ codebase, setCodebase }: Props) {
           ))}
         </ul>
       </div>
-      <div className="w-full lg:w-4/5 relative">
-        <Editor
-          options={{
-            readOnly: program.locked,
-            lineNumbersMinChars: 3,
-            fontSize: 16,
-            scrollbar: { horizontal: "hidden" },
-          }}
-          defaultLanguage="felys"
-          loading={<div className="loader" />}
-          onMount={config}
-          value={program.code}
-          onChange={(newCode) =>
-            setCodebase((cb) => {
-              if (newCode === undefined) return cb;
-              const updatedPrograms = [...cb.programs];
-              updatedPrograms[cb.cursor] = {
-                ...updatedPrograms[cb.cursor],
-                code: newCode,
-              };
-              return { ...cb, programs: updatedPrograms };
-            })
-          }
-        />
-        <div className="h-[30vh] w-full absolute bottom-0 z-20 bg-neutral-900 border-t-1 border-black p-3 overflow-auto">
+      <div className="w-full lg:w-4/5 flex flex-col">
+        <div className="flex-1">
+          <VSEditor codebase={codebase} setCodebase={setCodebase} />
+        </div>
+        <div className="h-[30vh] w-full bg-neutral-900 border-t-1 border-black p-3 flex flex-col">
           <div className="flex items-center justify-between">
             <code className="font-bold">Felys v0.4.0</code>
-            {program.locked ? (
-              <button
-                onClick={() =>
-                  setCodebase((cb) => {
-                    const updatedPrograms = [...cb.programs];
-                    updatedPrograms[cb.cursor] = {
-                      ...updatedPrograms[cb.cursor],
-                      locked: false,
-                      output: {
-                        ...updatedPrograms[cb.cursor].output,
-                        params: {},
-                      },
-                    };
-                    return { ...cb, programs: updatedPrograms };
-                  })
-                }
-              >
-                <LockIcon />
-              </button>
-            ) : (
-              <button
-                onClick={() =>
-                  setCodebase((cb) => {
-                    const updatedPrograms = [...cb.programs];
-                    updatedPrograms[cb.cursor] = {
-                      ...updatedPrograms[cb.cursor],
-                      locked: true,
-                    };
-                    return { ...cb, programs: updatedPrograms };
-                  })
-                }
-              >
-                <UnlockIcon />
-              </button>
-            )}
+            <Lock codebase={codebase} setCodebase={setCodebase} />
           </div>
-          <br />
-          <div className="whitespace-pre-wrap">
-            <code>{program.output?.stdout.join("\n")}</code>
-          </div>
-          <div className="whitespace-pre-wrap text-red-500">
-            <code>{program.output?.stderr}</code>
+          <div className="flex-1 overflow-auto mt-4">
+            <div className="whitespace-pre-wrap">
+              <code>{program.output?.stdout.join("\n")}</code>
+            </div>
+            <div className="whitespace-pre-wrap text-red-500">
+              <code>{program.output?.stderr}</code>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function VSEditor({ codebase, setCodebase }: Props) {
+  const program = codebase.programs[codebase.cursor];
+  return (
+    <Editor
+      options={{
+        readOnly: program.locked,
+        lineNumbersMinChars: 3,
+        fontSize: 16,
+        scrollbar: { horizontal: "hidden" },
+      }}
+      defaultLanguage="felys"
+      loading={<div className="loader" />}
+      onMount={config}
+      value={program.code}
+      onChange={(newCode) =>
+        setCodebase((cb) => {
+          if (newCode === undefined) return cb;
+          const updatedPrograms = [...cb.programs];
+          updatedPrograms[cb.cursor] = {
+            ...updatedPrograms[cb.cursor],
+            code: newCode,
+          };
+          return { ...cb, programs: updatedPrograms };
+        })
+      }
+    />
+  );
+}
+
+function Lock({ codebase, setCodebase }: Props) {
+  const program = codebase.programs[codebase.cursor];
+  return program.locked ? (
+    <button
+      onClick={() =>
+        setCodebase((cb) => {
+          const updatedPrograms = [...cb.programs];
+          updatedPrograms[cb.cursor] = {
+            ...updatedPrograms[cb.cursor],
+            locked: false,
+            output: {
+              ...updatedPrograms[cb.cursor].output,
+              params: {},
+            },
+          };
+          return { ...cb, programs: updatedPrograms };
+        })
+      }
+    >
+      <LockIcon />
+    </button>
+  ) : (
+    <button
+      onClick={() =>
+        setCodebase((cb) => {
+          const updatedPrograms = [...cb.programs];
+          updatedPrograms[cb.cursor] = {
+            ...updatedPrograms[cb.cursor],
+            locked: true,
+          };
+          return { ...cb, programs: updatedPrograms };
+        })
+      }
+    >
+      <UnlockIcon />
+    </button>
   );
 }
 
