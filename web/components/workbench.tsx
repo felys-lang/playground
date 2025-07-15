@@ -42,7 +42,9 @@ export default function Workbench({ codebase, setCodebase }: Props) {
               <code>{program.output?.stdout.join("\n")}</code>
             </div>
             <div className="whitespace-pre-wrap text-red-500">
-              <code>{program.output?.stderr}</code>
+              <code>
+                {program.output?.stderr && "Error: " + program.output?.stderr}
+              </code>
             </div>
           </div>
         </div>

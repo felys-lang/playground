@@ -22,3 +22,5 @@ type Matrix = {
   linear: number[];
   shape: [number, number];
 };
+
+export type SetModal = Dispatch<SetStateAction<boolean>>;
