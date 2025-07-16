@@ -16,5 +16,5 @@ ENV CLI=/app/cli
 EXPOSE 8000
 CMD ["gunicorn", "main:app", \
     "-k", "uvicorn.workers.UvicornWorker", \
-    "--workers", "20", \
+    "--workers", "7", \
     "--bind", "0.0.0.0:8000"]
