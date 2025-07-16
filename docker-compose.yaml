@@ -3,9 +3,31 @@ services:
     build:
       context: web
       args:
-        NEXT_PUBLIC_API: https://exec.felys.dev/api
-    image: felysneko/felys-web:latest
+        NEXT_PUBLIC_API: https://localhost/api
+    restart: always
+    networks:
+      - nginx
 
   api:
     build: api
-    image: felysneko/felys-api:latest
+    restart: always
+    networks:
+      - nginx
+
+  nginx:
+    build: nginx
+    restart: always
+    environment:
+      - HOST=localhost
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - nginx
+    volumes:
+      - ./felys.dev.pem:/etc/ssl/certs/felys.dev.pem:ro
+      - ./felys.dev.key:/etc/ssl/private/felys.dev.key:ro
+
+networks:
+  nginx:
+    name: nginx
