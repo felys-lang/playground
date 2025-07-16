@@ -1,13 +1,11 @@
 services:
   web:
-    platform: linux/amd64
     build:
       context: web
       args:
-        NEXT_PUBLIC_API: http://exec.felys.dev/api
+        NEXT_PUBLIC_API: https://exec.felys.dev/api
     image: felysneko/felys-web:lastest
 
   api:
-    platform: linux/amd64
     build: api
     image: felysneko/felys-api:lastest
