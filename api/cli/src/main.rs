@@ -4,20 +4,23 @@ use crate::mapping::O;
 use clap::Parser;
 use felys::{Config, Output, Packrat};
 use mapping::I;
-use serde_json::Error;
 use std::collections::HashMap;
+use std::error::Error;
+use std::fs;
+use std::path::PathBuf;
 
 #[derive(Parser)]
 struct Args {
-    json: String,
+    path: PathBuf,
     depth: usize,
     momentum: f64,
     seed: usize,
 }
 
-fn main() -> Result<(), Error> {
+fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
-    let i = serde_json::from_str::<I>(args.json.as_str())?;
+    let json = fs::read_to_string(args.path)?;
+    let i = serde_json::from_str::<I>(json.as_str())?;
     let o = run(i, args.depth, args.momentum, args.seed);
     let result = serde_json::to_string(&o)?;
     print!("{result}");

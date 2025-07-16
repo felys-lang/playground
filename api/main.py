@@ -1,7 +1,8 @@
 import os
 import subprocess
+import tempfile
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 CLI = os.getenv('CLI')
@@ -24,18 +25,30 @@ async def root():
 @app.post('/execute')
 async def execute(request: Request):
     json = await request.body()
-    process = subprocess.Popen(
-        [CLI, json, str(100), str(0.9), str(42)],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
+    with tempfile.NamedTemporaryFile(delete=False) as f:
+        f.write(json)
+        f.flush()
+        path = f.name
 
     try:
-        stdout, stderr = process.communicate(timeout=1)
-    except subprocess.TimeoutExpired:
-        process.kill()
-        return Response(status_code=504)
+        process = subprocess.Popen(
+            [CLI, path, str(100), str(0.9), str(42)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
 
-    if stderr:
-        return Response(stderr, status_code=500)
-    return Response(stdout, media_type='application/json')
+        try:
+            stdout, stderr = process.communicate(timeout=1)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            raise HTTPException(status_code=504)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+        if stderr:
+            raise HTTPException(status_code=500, detail=stderr)
+        return Response(stdout, media_type='application/json')
+
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
