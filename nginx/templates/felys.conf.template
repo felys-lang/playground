@@ -7,7 +7,7 @@ upstream api {
 }
 
 
-limit_req_zone $binary_remote_addr zone=ratelimit:5m rate=5r/s;
+limit_req_zone $binary_remote_addr zone=ratelimit:5m rate=10r/s;
 
 ssl_protocols TLSv1.3 TLSv1.2;
 ssl_prefer_server_ciphers on;
