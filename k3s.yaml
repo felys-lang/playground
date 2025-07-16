@@ -14,15 +14,15 @@ spec:
     spec:
       containers:
         - name: web
-          image: felysneko/felys-web:lastest
+          image: felysneko/felys-web:latest
           imagePullPolicy: Always
           resources:
             requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
               memory: "256Mi"
               cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
           ports:
             - containerPort: 3000
 
@@ -55,15 +55,15 @@ spec:
     spec:
       containers:
         - name: api
-          image: felysneko/felys-api:lastest
+          image: felysneko/felys-api:latest
           imagePullPolicy: Always
           resources:
             requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
               memory: "256Mi"
               cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
           ports:
             - containerPort: 8000
 

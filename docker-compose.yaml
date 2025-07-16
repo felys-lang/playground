@@ -4,8 +4,8 @@ services:
       context: web
       args:
         NEXT_PUBLIC_API: https://exec.felys.dev/api
-    image: felysneko/felys-web:lastest
+    image: felysneko/felys-web:latest
 
   api:
     build: api
-    image: felysneko/felys-api:lastest
+    image: felysneko/felys-api:latest
