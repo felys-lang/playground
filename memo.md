@@ -1,12 +1,20 @@
 ```shell
-docker build -t felysneko/felys-web:latest --build-arg NEXT_PUBLIC_API=https://exec.felys.dev/api web
+docker build \
+    -t felysneko/felys-nginx:latest \
+    --build-arg HOST=exec.felys.dev \
+    nginx
+docker push felysneko/felys-nginx:latest
+
+docker build \
+    -t felysneko/felys-web:latest \
+    --build-arg NEXT_PUBLIC_API=https://exec.felys.dev/api \
+    web
 docker push felysneko/felys-web:latest
 
-docker build -t felysneko/felys-api:latest api
+docker build \
+    -t felysneko/felys-api:latest \
+    api
 docker push felysneko/felys-api:latest
-
-docker build -t felysneko/felys-nginx:latest nginx
-docker push felysneko/felys-nginx:latest
 ```
 
 ```yaml
@@ -26,8 +34,6 @@ services:
   nginx:
     image: felysneko/felys-nginx:latest
     restart: always
-    environment:
-      - HOST=exec.felys.dev
     ports:
       - 80:80
       - 443:443

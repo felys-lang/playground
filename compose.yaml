@@ -15,10 +15,11 @@ services:
       - nginx
 
   nginx:
-    build: nginx
+    build:
+      context: nginx
+      args:
+        HOST: localhost
     restart: always
-    environment:
-      - HOST=localhost
     ports:
       - 80:80
       - 443:443
