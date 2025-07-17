@@ -1,6 +1,14 @@
 # Playground
 
-Web interface to run Felys programs built with Axum and Next.
+Web interface to run Felys programs built with Next and FastAPI.
+
+## Setup
+
+Nginx redirects `http` to `https` by default, so you need to mount your own SSL certificate.
+
+```shell
+docker compose up --build -d
+```
 
 ## License
 
