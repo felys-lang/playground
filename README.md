@@ -2,7 +2,7 @@
 
 Web interface to run Felys programs built with Next and FastAPI.
 
-## Deployment
+## Setup
 
 Nginx redirects `http` to `https` by default, so you need to mount your own SSL certificate.
 
