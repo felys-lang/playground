@@ -1,12 +1,12 @@
 export const hoyoverse = `talk = |name, to| {
     msg = if name == "Pardofelis" and to == "Mei" {
-        "芽衣姐，我不想死……"
+        "芽衣姐……我……不想死……"
     } else if name == "Focalors" and to == "Neuvillette" {
         "再见纳维莱特，希望你喜欢这五百年来属于你的戏份。"
     } else if name == "Acheron" {
-        "我为逝者哀哭！"
-    } else if name == "Burnice" {
-        "BURNICE x6 GO GO!"
+        "我为逝者哀哭……暮雨，终将落下。"
+    } else if name == "Astra" {
+        "唱著跳著説著，細心編寫遊歷過程，太動聽～"
     } else {
         "Hello, " + to
     };
@@ -16,8 +16,8 @@ export const hoyoverse = `talk = |name, to| {
 people = [
     ("Pardofelis", "Mei"),
     ("Focalors", "Neuvillette"),
-    ("Acheron", "Aventurine"),
-    ("Burnice", "Caesar"),
+    ("Acheron", "IX"),
+    ("Astra", "Evelyn"),
     ("FelysNeko", rust __elysia__),
 ];
 
@@ -37,7 +37,9 @@ birthday = "Nov. 11th";
 print (name, nickname, birthday);
 `;
 
-export const iris = `iris = [
+export const iris = `// R. Fisher. "Iris," UCI Machine Learning Repository, 1936. [Online].
+// Available: https://doi.org/10.24432/C56C76.
+iris = [
     ([ 4.9, 3.0, 1.4, 0.2; ], [ 0.0; ]),
     ([ 6.4, 3.1, 5.5, 1.8; ], [ 2.0; ]),
     ([ 6.3, 3.4, 5.6, 2.4; ], [ 2.0; ]),
@@ -193,38 +195,42 @@ test = [
     ([ 5.8, 2.7, 5.1, 1.9; ], [ 2.0; ]),
 ];
 
-sequential = [
-    |x| x @ <4, 8> + <1, 8>,
-    |x| rust ReLU(x),
-    |x| x @ <8, 8> + <1, 8>,
-    |x| rust ReLU(x),
-    |x| x @ <8, 3> + <1, 3>,
-];
+forward = |x| {
+    // Parameters are only initialized once, so they can be reused.
+    sequential = [
+        |x| x @ <4, 8> + <1, 8>,
+        |x| rust ReLU(x),
+        |x| x @ <8, 8> + <1, 8>,
+        |x| rust ReLU(x),
+        |x| x @ <8, 3> + <1, 3>,
+    ];
 
+    for fn in sequential {
+        x = fn(x);
+    }
+    x
+};
+
+// Main training loop
 epoch = 0;
 while epoch < 50 {
     loss = [ 0.0; ];
     counter = 0;
     for (x, y) in iris {
-        for fn in sequential {
-            x = fn(x);
-        }
+        x = forward(x);
         loss += rust CrossEntropy(x, y);
-        counter += 1;
-
-        if counter == 20 {
+        
+        if counter % 20 == 0 {
             step loss by 0.01 / 20.0;
             loss = [ 0.0; ];
-            counter = 0;
         }
+        counter += 1;
     }
     epoch += 1;
 }
 
 for (x, y) in test {
-    for fn in sequential {
-        x = fn(x);
-    }
+    x = forward(x);
     print (x, y)
 }
 `;

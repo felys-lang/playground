@@ -129,7 +129,7 @@ const config = (_: editor.IStandaloneCodeEditor, monaco: Monaco) => {
         [/__elysia__/, "elysia"],
         [/\/\/[^\n]*/, "comment"],
         [
-          /if|else|while|break|continue|loop|return|true|rust|print|false|not|and|or|for|in|step|by(?!\w)/,
+          /(if|else|while|break|continue|loop|return|true|rust|print|false|not|and|or|for|in|step|by)(?!\w)/,
           "keyword",
         ],
         [/[a-zA-Z_][\w_]*(?=\s*\()/, "function.call"],
