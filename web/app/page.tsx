@@ -17,6 +17,7 @@ export default function Home() {
           params: {},
           stdout: [],
           stderr: "",
+          exit: "",
         },
       },
       {
@@ -27,6 +28,7 @@ export default function Home() {
           params: {},
           stdout: [],
           stderr: "",
+          exit: "",
         },
       },
       {
@@ -37,6 +39,7 @@ export default function Home() {
           params: {},
           stdout: [],
           stderr: "",
+          exit: "",
         },
       },
       {
@@ -47,6 +50,7 @@ export default function Home() {
           params: {},
           stdout: [],
           stderr: "",
+          exit: "",
         },
       },
       {
@@ -57,6 +61,7 @@ export default function Home() {
           params: {},
           stdout: [],
           stderr: "",
+          exit: "",
         },
       },
     ],

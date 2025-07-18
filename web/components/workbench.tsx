@@ -37,14 +37,27 @@ export default function Workbench({ codebase, setCodebase }: Props) {
             <Lock codebase={codebase} setCodebase={setCodebase} />
           </div>
           <div className="flex-1 overflow-auto mt-4">
-            <div className="whitespace-pre-wrap">
-              <code>{program.output?.stdout.join("\n")}</code>
-            </div>
-            <div className="whitespace-pre-wrap text-red-500">
-              <code>
-                {program.output?.stderr && "Error: " + program.output?.stderr}
-              </code>
-            </div>
+            {program.output?.stdout && (
+              <div className="whitespace-pre-wrap">
+                <code>{program.output?.stdout.join("\n")}</code>
+              </div>
+            )}
+            {program.output?.stderr && (
+              <div className="whitespace-pre-wrap">
+                <code>
+                  <b className="text-red-500">Stderr: </b>
+                  {program.output?.stderr}
+                </code>
+              </div>
+            )}
+            {program.output?.exit && (
+              <div className="whitespace-pre-wrap">
+                <code>
+                  <b className="text-elysia">Exit: </b>
+                  {program.output?.exit}
+                </code>
+              </div>
+            )}
           </div>
         </div>
       </div>

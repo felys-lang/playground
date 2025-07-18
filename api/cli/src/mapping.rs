@@ -37,6 +37,7 @@ pub struct O {
     params: HashMap<usize, (M, M)>,
     stdout: Vec<String>,
     stderr: String,
+    exit: String,
 }
 
 impl O {
@@ -49,6 +50,7 @@ impl O {
             params,
             stdout: output.stdout,
             stderr: output.stderr,
+            exit: output.exit.to_string(),
         }
     }
 
@@ -57,6 +59,7 @@ impl O {
             params: HashMap::new(),
             stdout: Vec::new(),
             stderr: msg,
+            exit: String::new(),
         }
     }
 }

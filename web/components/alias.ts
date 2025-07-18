@@ -16,6 +16,7 @@ export type Output = {
   params: Record<number, [Matrix, Matrix]>;
   stdout: string[];
   stderr: string;
+  exit: string;
 };
 
 type Matrix = {

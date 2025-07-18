@@ -109,18 +109,7 @@ const executeCode = async (codebase: Codebase, setCodebase: SetCodebase) => {
   }).catch((e) => console.log(e));
 
   if (!response) {
-    setCodebase((cb) => {
-      const updatedPrograms = [...cb.programs];
-      updatedPrograms[cb.cursor] = {
-        ...updatedPrograms[cb.cursor],
-        output: {
-          ...updatedPrograms[cb.cursor].output,
-          stdout: [],
-          stderr: "no network connection",
-        },
-      };
-      return { ...cb, programs: updatedPrograms };
-    });
+    setCodebase((cb) => setCodebaseError(cb, "no network connection"));
     return;
   }
 
@@ -135,30 +124,22 @@ const executeCode = async (codebase: Codebase, setCodebase: SetCodebase) => {
       return { ...cb, programs: updatedPrograms };
     });
   } else if (response.status == 504) {
-    setCodebase((cb) => {
-      const updatedPrograms = [...cb.programs];
-      updatedPrograms[cb.cursor] = {
-        ...updatedPrograms[cb.cursor],
-        output: {
-          ...updatedPrograms[cb.cursor].output,
-          stdout: [],
-          stderr: "timeout",
-        },
-      };
-      return { ...cb, programs: updatedPrograms };
-    });
+    setCodebase((cb) => setCodebaseError(cb, "timeout"));
   } else {
-    setCodebase((cb) => {
-      const updatedPrograms = [...cb.programs];
-      updatedPrograms[cb.cursor] = {
-        ...updatedPrograms[cb.cursor],
-        output: {
-          ...updatedPrograms[cb.cursor].output,
-          stdout: [],
-          stderr: "unknown",
-        },
-      };
-      return { ...cb, programs: updatedPrograms };
-    });
+    setCodebase((cb) => setCodebaseError(cb, "unknown"));
   }
 };
+
+function setCodebaseError(cb: Codebase, error: string): Codebase {
+  const updatedPrograms = [...cb.programs];
+  updatedPrograms[cb.cursor] = {
+    ...updatedPrograms[cb.cursor],
+    output: {
+      ...updatedPrograms[cb.cursor].output,
+      stdout: [],
+      stderr: error,
+      exit: "",
+    },
+  };
+  return { ...cb, programs: updatedPrograms };
+}
