@@ -2,7 +2,7 @@ mod mapping;
 
 use crate::mapping::O;
 use clap::Parser;
-use felys::{Config, Output, Packrat};
+use felys::{Config, Fxx, Output, Packrat};
 use mapping::I;
 use std::collections::HashMap;
 use std::error::Error;
@@ -13,7 +13,7 @@ use std::path::PathBuf;
 struct Args {
     path: PathBuf,
     depth: usize,
-    momentum: f64,
+    momentum: Fxx,
     seed: usize,
 }
 
@@ -27,14 +27,14 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn run(i: I, depth: usize, momentum: f64, seed: usize) -> O {
+fn run(i: I, depth: usize, momentum: Fxx, seed: usize) -> O {
     match wrapper(i, depth, momentum, seed) {
         Ok(output) => O::ok(output),
         Err(msg) => O::err(msg),
     }
 }
 
-fn wrapper(i: I, depth: usize, momentum: f64, seed: usize) -> Result<Output, String> {
+fn wrapper(i: I, depth: usize, momentum: Fxx, seed: usize) -> Result<Output, String> {
     let mut params = HashMap::new();
     for (i, (x, m)) in i.params {
         params.insert(i, (x.try_into()?, m.try_into()?));

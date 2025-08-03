@@ -1,8 +1,6 @@
-use felys::{Matrix, Output};
+use felys::{Fxx, Matrix, Output};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
-type Fxx = f64;
 
 #[derive(Serialize, Deserialize)]
 pub struct M {
