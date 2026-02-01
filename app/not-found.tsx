@@ -6,7 +6,7 @@ export default function NotFound() {
       <h1 className="flex items-center text-xl font-semibold">
         <span>Page Not Found</span>
         <div className="mx-3 w-0.5 h-5 bg-white" />
-        <Link href="/" className="text-elysia">
+        <Link href="/" className="text-pink">
           Home
         </Link>
       </h1>

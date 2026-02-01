@@ -74,13 +74,7 @@ function VSEditor({ codebase, setCodebase }: Props) {
       setCodebase((prev) => ({
         ...prev,
         programs: prev.programs.map((x, i) =>
-          i === prev.cursor
-            ? {
-                ...x,
-                code: newCode,
-                binary: undefined,
-              }
-            : x,
+          i === prev.cursor ? { ...x, code: newCode, binary: undefined } : x,
         ),
       }));
     },
