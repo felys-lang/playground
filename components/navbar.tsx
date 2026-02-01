@@ -6,7 +6,14 @@ import {
   ExecuctionIcon,
 } from "@/components/icons";
 import { Codebase } from "@/app/page";
-import { Dispatch, SetStateAction } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import init, { compile, execute } from "@/wasm/pkg";
 
 interface Props {
   codebase: Codebase;
@@ -15,6 +22,52 @@ interface Props {
 
 export default function Navbar({ codebase, setCodebase }: Props) {
   const program = codebase.programs[codebase.cursor];
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    init().then(() => {
+      setIsReady(true);
+    });
+  }, []);
+
+  const handleCompile = useCallback(() => {
+    if (!isReady) {
+      return;
+    }
+    try {
+      const binary = compile(program.code, 0);
+      setCodebase((prev) => ({
+        ...prev,
+        programs: prev.programs.map((x, i) =>
+          i === prev.cursor ? { ...x, binary, outcome: undefined } : x,
+        ),
+      }));
+    } catch (err) {
+      const outcome = { stdout: "", result: String(err), success: false };
+      setCodebase((prev) => ({
+        ...prev,
+        programs: prev.programs.map((x, i) =>
+          i === prev.cursor
+            ? {
+                ...x,
+                outcome,
+              }
+            : x,
+        ),
+      }));
+    }
+  }, [isReady, program.code, setCodebase]);
+
+  const handleExecute = useCallback(() => {
+    if (!program.binary) return;
+    const outcome = execute(program.binary);
+    setCodebase((prev) => ({
+      ...prev,
+      programs: prev.programs.map((x, i) =>
+        i === prev.cursor ? { ...x, outcome } : x,
+      ),
+    }));
+  }, [program.binary]);
 
   return (
     <header className="flex justify-between py-2 px-4 lg:px-6 border-b border-black">
@@ -42,18 +95,12 @@ export default function Navbar({ codebase, setCodebase }: Props) {
         >
           <CollectionIcon />
         </button>
-        {program.modified ? (
-          <button
-            className="hover:cursor-pointer"
-            onClick={() => console.log("compile")}
-          >
+        {program.binary === undefined ? (
+          <button className="hover:cursor-pointer" onClick={handleCompile}>
             <CompilationIcon />
           </button>
         ) : (
-          <button
-            className="hover:cursor-pointer"
-            onClick={() => console.log("execute")}
-          >
+          <button className="hover:cursor-pointer" onClick={handleExecute}>
             <ExecuctionIcon />
           </button>
         )}

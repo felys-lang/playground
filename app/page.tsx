@@ -9,14 +9,14 @@ export type Codebase = {
   programs: {
     name: string;
     code: string;
-    modified: boolean;
+    binary: Uint8Array | undefined;
     outcome: Outcome | undefined;
   }[];
 };
 
 export type Outcome = {
   stdout: string;
-  reuslt: string;
+  result: string;
   success: boolean;
 };
 
@@ -27,7 +27,7 @@ export default function Home() {
       {
         name: "playground.fs",
         code: playground,
-        modified: true,
+        binary: undefined,
         outcome: undefined,
       },
     ],

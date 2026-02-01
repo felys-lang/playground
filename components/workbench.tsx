@@ -2,7 +2,7 @@
 import { Codebase } from "@/app/page";
 import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 
 interface Props {
   codebase: Codebase;
@@ -19,7 +19,7 @@ export default function Workbench({ codebase, setCodebase }: Props) {
           {codebase.programs.map((value, key) => (
             <li key={key}>
               <button
-                className={`py-2 px-4 w-full text-start hover:bg-neutral-800 ${
+                className={`py-2 px-4 w-full text-start hover:cursor-pointer hover:bg-neutral-800 ${
                   codebase.cursor === key ? "bg-neutral-800" : ""
                 }`}
                 onClick={() => setCodebase((cb) => ({ ...cb, cursor: key }))}
@@ -34,25 +34,25 @@ export default function Workbench({ codebase, setCodebase }: Props) {
         <VSEditor codebase={codebase} setCodebase={setCodebase} />
         <div className="h-[30vh] w-full absolute z-20 bottom-0 bg-neutral-900 border-t border-black p-3 flex flex-col">
           <div>
-            <code className="font-bold">Felys v0.4.0</code>
+            <code className="font-bold">
+              Felys v{process.env.NEXT_PUBLIC_BUILD_DATE}
+            </code>
           </div>
           {program.outcome && (
             <div className="flex-1 overflow-auto mt-4">
-              {program.outcome?.stdout && (
+              {program.outcome.stdout && (
                 <div className="whitespace-pre-wrap">
-                  <code>{program.outcome?.stdout}</code>
+                  <code>{program.outcome.stdout}</code>
                 </div>
               )}
               <div className="whitespace-pre-wrap">
-                {program.outcome?.success ? (
-                  <code className="text-red-500">
-                    {program.outcome?.reuslt}
+                {program.outcome.success ? (
+                  <code>
+                    <b className="text-pink">Exit: </b>
+                    {program.outcome.result}
                   </code>
                 ) : (
-                  <code>
-                    <b className="text-elysia">Exit: </b>
-                    {program.outcome?.reuslt}
-                  </code>
+                  <code className="text-red-400">{program.outcome.result}</code>
                 )}
               </div>
             </div>
@@ -65,6 +65,28 @@ export default function Workbench({ codebase, setCodebase }: Props) {
 
 function VSEditor({ codebase, setCodebase }: Props) {
   const program = codebase.programs[codebase.cursor];
+  const handleCodeChange = useCallback(
+    (newCode: string | undefined) => {
+      if (newCode === undefined || newCode === program.code) {
+        return;
+      }
+
+      setCodebase((prev) => ({
+        ...prev,
+        programs: prev.programs.map((x, i) =>
+          i === prev.cursor
+            ? {
+                ...x,
+                code: newCode,
+                binary: undefined,
+              }
+            : x,
+        ),
+      }));
+    },
+    [program.code, setCodebase],
+  );
+
   return (
     <Editor
       options={{
@@ -76,17 +98,7 @@ function VSEditor({ codebase, setCodebase }: Props) {
       loading={<div className="loader" />}
       onMount={config}
       value={program.code}
-      onChange={(newCode) =>
-        setCodebase((cb) => {
-          if (newCode === undefined) return cb;
-          const updatedPrograms = [...cb.programs];
-          updatedPrograms[cb.cursor] = {
-            ...updatedPrograms[cb.cursor],
-            code: newCode,
-          };
-          return { ...cb, programs: updatedPrograms };
-        })
-      }
+      onChange={handleCodeChange}
     />
   );
 }
