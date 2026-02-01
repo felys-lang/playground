@@ -1,6 +1,0 @@
-target
-Dockerfile
-.dockerignore
-Cargo.lock
-.gitignore
-.git
