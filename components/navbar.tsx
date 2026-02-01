@@ -47,12 +47,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
       setCodebase((prev) => ({
         ...prev,
         programs: prev.programs.map((x, i) =>
-          i === prev.cursor
-            ? {
-                ...x,
-                outcome,
-              }
-            : x,
+          i === prev.cursor ? { ...x, outcome } : x,
         ),
       }));
     }
@@ -60,7 +55,12 @@ export default function Navbar({ codebase, setCodebase }: Props) {
 
   const handleExecute = useCallback(() => {
     if (!program.binary) return;
-    const outcome = execute(program.binary);
+    let outcome = undefined;
+    try {
+      outcome = execute(program.binary);
+    } catch (err) {
+      outcome = { stdout: "", result: String(err), success: false };
+    }
     setCodebase((prev) => ({
       ...prev,
       programs: prev.programs.map((x, i) =>

@@ -35,7 +35,7 @@ export default function Workbench({ codebase, setCodebase }: Props) {
         <div className="h-[30vh] w-full absolute z-20 bottom-0 bg-neutral-900 border-t border-black p-3 flex flex-col">
           <div>
             <code className="font-bold">
-              Felys v{process.env.NEXT_PUBLIC_BUILD_DATE}
+              Felys v{process.env.NEXT_PUBLIC_BUILD_DATE} on WASM
             </code>
           </div>
           {program.outcome && (
@@ -109,7 +109,7 @@ const config = (_: editor.IStandaloneCodeEditor, monaco: Monaco) => {
   monaco.languages.setMonarchTokensProvider("felys", {
     tokenizer: {
       root: [
-        [/__elysia__/, "elysia"],
+        [/(elysia|cyrene)/, "pink"],
         [/\/\/[^\n]*/, "comment"],
         [
           /(fn|group|impl|if|else|while|break|continue|loop|return|true|false|not|and|or|for|in)(?!\w)/,
@@ -131,7 +131,7 @@ const config = (_: editor.IStandaloneCodeEditor, monaco: Monaco) => {
     base: "vs-dark",
     inherit: true,
     rules: [
-      { token: "elysia", foreground: "#ffc6f5" },
+      { token: "pink", foreground: "#ffc6f5" },
       { token: "identifier", foreground: "#9cdcfe" },
       { token: "function.call", foreground: "#dcdcaa" },
     ],
