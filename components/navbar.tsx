@@ -11,9 +11,9 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
-import init, { compile, execute } from "@/wasm/pkg";
 
 interface Props {
   codebase: Codebase;
@@ -23,52 +23,124 @@ interface Props {
 export default function Navbar({ codebase, setCodebase }: Props) {
   const [modal, setModal] = useState(false);
   const program = codebase.programs[codebase.cursor];
-  const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
-    init().then(() => {
-      setIsReady(true);
-    });
-  }, []);
+  const [isCompiling, setIsCompiling] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const compileWorkerRef = useRef<Worker | null>(null);
+  const executeWorkerRef = useRef<Worker | null>(null);
 
   const handleCompile = useCallback(() => {
-    if (!isReady) {
-      return;
+    if (isCompiling) return;
+
+    if (compileWorkerRef.current) {
+      compileWorkerRef.current.terminate();
     }
-    try {
-      const binary = compile(program.code, 0);
-      setCodebase((prev) => ({
-        ...prev,
-        programs: prev.programs.map((x, i) =>
-          i === prev.cursor ? { ...x, binary, outcome: undefined } : x,
-        ),
-      }));
-    } catch (err) {
-      const outcome = { stdout: "", result: String(err), success: false };
+
+    const worker = new Worker(new URL("./workers/compile.ts", import.meta.url));
+    compileWorkerRef.current = worker;
+    setIsCompiling(true);
+
+    const timeoutId = setTimeout(() => {
+      worker.terminate();
+      compileWorkerRef.current = null;
+      setIsCompiling(false);
+
+      const outcome = {
+        stdout: "",
+        result: "timeout",
+        success: false,
+      };
       setCodebase((prev) => ({
         ...prev,
         programs: prev.programs.map((x, i) =>
           i === prev.cursor ? { ...x, outcome } : x,
         ),
       }));
-    }
-  }, [isReady, program.code, setCodebase]);
+    }, 5000);
+
+    worker.onmessage = (e) => {
+      clearTimeout(timeoutId);
+      worker.terminate();
+      compileWorkerRef.current = null;
+      setIsCompiling(false);
+
+      const { binary, outcome } = e.data;
+
+      setCodebase((prev) => ({
+        ...prev,
+        programs: prev.programs.map((x, i) =>
+          i === prev.cursor ? { ...x, binary, outcome } : x,
+        ),
+      }));
+    };
+
+    worker.onerror = (e) => {
+      setIsCompiling(false);
+      worker.terminate();
+    };
+
+    worker.postMessage({ code: program.code, o: 0 });
+  }, [isCompiling, program.code, setCodebase]);
 
   const handleExecute = useCallback(() => {
-    if (!program.binary) return;
-    let outcome = undefined;
-    try {
-      outcome = execute(program.binary);
-    } catch (err) {
-      outcome = { stdout: "", result: String(err), success: false };
+    if (isExecuting) return;
+
+    if (executeWorkerRef.current) {
+      executeWorkerRef.current.terminate();
     }
-    setCodebase((prev) => ({
-      ...prev,
-      programs: prev.programs.map((x, i) =>
-        i === prev.cursor ? { ...x, outcome } : x,
-      ),
-    }));
-  }, [program.binary]);
+
+    const worker = new Worker(new URL("./workers/execute.ts", import.meta.url));
+    executeWorkerRef.current = worker;
+    setIsExecuting(true);
+
+    const timeoutId = setTimeout(() => {
+      worker.terminate();
+      executeWorkerRef.current = null;
+      setIsExecuting(false);
+
+      const outcome = {
+        stdout: "",
+        result: "timeout",
+        success: false,
+      };
+      setCodebase((prev) => ({
+        ...prev,
+        programs: prev.programs.map((x, i) =>
+          i === prev.cursor ? { ...x, outcome } : x,
+        ),
+      }));
+    }, 10000);
+
+    worker.onmessage = (e) => {
+      clearTimeout(timeoutId);
+      worker.terminate();
+      compileWorkerRef.current = null;
+      setIsExecuting(false);
+
+      const outcome = e.data;
+
+      setCodebase((prev) => ({
+        ...prev,
+        programs: prev.programs.map((x, i) =>
+          i === prev.cursor ? { ...x, outcome } : x,
+        ),
+      }));
+    };
+
+    worker.onerror = (e) => {
+      setIsExecuting(false);
+      worker.terminate();
+    };
+
+    worker.postMessage({ binary: program.binary });
+  }, [isExecuting, program.binary, setCodebase]);
+
+  useEffect(() => {
+    return () => {
+      compileWorkerRef.current?.terminate();
+      executeWorkerRef.current?.terminate();
+    };
+  }, []);
 
   return (
     <header className="flex justify-between py-2 px-4 lg:px-6 border-b border-black">
@@ -90,7 +162,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
         </Link>
       </div>
       <div className="flex items-center space-x-4">
-        <button className="lg:hidden z-40" onClick={() => setModal((m) => !m)}>
+        <button className="lg:hidden z-40 hover:cursor-pointer" onClick={() => setModal((m) => !m)}>
           <CollectionIcon />
         </button>
         {program.binary === undefined ? (
