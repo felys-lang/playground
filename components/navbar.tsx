@@ -47,7 +47,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
 
       const outcome = {
         stdout: "",
-        result: "timeout",
+        result: "compiler timeout",
         success: false,
       };
       setCodebase((prev) => ({
@@ -56,7 +56,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
           i === prev.cursor ? { ...x, outcome } : x,
         ),
       }));
-    }, 5000);
+    }, 2000);
 
     worker.onmessage = (e) => {
       clearTimeout(timeoutId);
@@ -100,7 +100,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
 
       const outcome = {
         stdout: "",
-        result: "timeout",
+        result: "virtual machine timeout",
         success: false,
       };
       setCodebase((prev) => ({
@@ -109,7 +109,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
           i === prev.cursor ? { ...x, outcome } : x,
         ),
       }));
-    }, 10000);
+    }, 5000);
 
     worker.onmessage = (e) => {
       clearTimeout(timeoutId);
@@ -162,18 +162,23 @@ export default function Navbar({ codebase, setCodebase }: Props) {
         </Link>
       </div>
       <div className="flex items-center space-x-4">
-        <button className="lg:hidden z-40 hover:cursor-pointer" onClick={() => setModal((m) => !m)}>
+        <button
+          className="lg:hidden z-40 hover:cursor-pointer"
+          onClick={() => setModal((m) => !m)}
+        >
           <CollectionIcon />
         </button>
-        {program.binary === undefined ? (
-          <button className="hover:cursor-pointer" onClick={handleCompile}>
-            <CompilationIcon />
-          </button>
-        ) : (
-          <button className="hover:cursor-pointer" onClick={handleExecute}>
-            <ExecuctionIcon />
-          </button>
-        )}
+        {program.binary === undefined
+          ? !isCompiling && (
+              <button className="hover:cursor-pointer" onClick={handleCompile}>
+                <CompilationIcon />
+              </button>
+            )
+          : !isExecuting && (
+              <button className="hover:cursor-pointer" onClick={handleExecute}>
+                <ExecuctionIcon />
+              </button>
+            )}
       </div>
       <Selector
         modal={modal}
