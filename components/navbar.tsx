@@ -11,6 +11,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -114,7 +115,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
     worker.onmessage = (e) => {
       clearTimeout(timeoutId);
       worker.terminate();
-      compileWorkerRef.current = null;
+      executeWorkerRef.current = null;
       setIsExecuting(false);
 
       const outcome = e.data;
@@ -134,6 +135,12 @@ export default function Navbar({ codebase, setCodebase }: Props) {
 
     worker.postMessage({ binary: program.binary });
   }, [isExecuting, program.binary, setCodebase]);
+
+  const state = useMemo(() => {
+    if (isCompiling || isExecuting) return "working";
+    if (program.binary === undefined) return "compile";
+    return "execute";
+  }, [isCompiling, isExecuting, program.binary]);
 
   useEffect(() => {
     return () => {
@@ -168,17 +175,25 @@ export default function Navbar({ codebase, setCodebase }: Props) {
         >
           <CollectionIcon />
         </button>
-        {program.binary === undefined
-          ? !isCompiling && (
-              <button className="hover:cursor-pointer" onClick={handleCompile}>
-                <CompilationIcon />
-              </button>
-            )
-          : !isExecuting && (
-              <button className="hover:cursor-pointer" onClick={handleExecute}>
-                <ExecuctionIcon />
-              </button>
-            )}
+        <div className="loder-container" key={state}>
+          {state === "working" ? (
+            <div className="loader" />
+          ) : state === "compile" ? (
+            <button
+              className="loader-container hover:cursor-pointer"
+              onClick={handleCompile}
+            >
+              <CompilationIcon />
+            </button>
+          ) : (
+            <button
+              className="loader-container hover:cursor-pointer"
+              onClick={handleExecute}
+            >
+              <ExecuctionIcon />
+            </button>
+          )}
+        </div>
       </div>
       <Selector
         modal={modal}
