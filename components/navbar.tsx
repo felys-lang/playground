@@ -175,21 +175,15 @@ export default function Navbar({ codebase, setCodebase }: Props) {
         >
           <CollectionIcon />
         </button>
-        <div className="loder-container" key={state}>
+        <div className="loader-container" key={state}>
           {state === "working" ? (
             <div className="loader" />
           ) : state === "compile" ? (
-            <button
-              className="loader-container hover:cursor-pointer"
-              onClick={handleCompile}
-            >
+            <button className="hover:cursor-pointer" onClick={handleCompile}>
               <CompilationIcon />
             </button>
           ) : (
-            <button
-              className="loader-container hover:cursor-pointer"
-              onClick={handleExecute}
-            >
+            <button className="hover:cursor-pointer" onClick={handleExecute}>
               <ExecuctionIcon />
             </button>
           )}
