@@ -89,7 +89,7 @@ function VSEditor({ codebase, setCodebase }: Props) {
         scrollbar: { horizontal: "hidden" },
       }}
       defaultLanguage="felys"
-      loading={<div className="loader" />}
+      loading={<div className="vscode-loader mb-[30vh]" />}
       onMount={config}
       value={program.code}
       onChange={handleCodeChange}

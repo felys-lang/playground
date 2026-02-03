@@ -80,7 +80,7 @@ export default function Navbar({ codebase, setCodebase }: Props) {
       worker.terminate();
     };
 
-    worker.postMessage({ code: program.code, o: 0 });
+    worker.postMessage({ code: program.code, o: 1 });
   }, [isCompiling, program.code, setCodebase]);
 
   const handleExecute = useCallback(() => {
