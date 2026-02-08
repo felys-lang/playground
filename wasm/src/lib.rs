@@ -1,4 +1,4 @@
-use felys::{Elysia, Object, PhiLia093};
+use felys::{III, Object, PhiLia093};
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
 
@@ -7,9 +7,8 @@ pub fn compile(code: &str, o: usize) -> Result<Vec<u8>, String> {
     let mut buf = Vec::new();
     PhiLia093::from(code.to_string())
         .parse()?
-        .cfg()?
-        .optimize(o)?
-        .codegen()
+        .desugar()?
+        .codegen(o)?
         .dump(&mut buf)
         .map_err(|_| "Elysia: failed to dump\n".to_string())?;
     Ok(buf)
@@ -25,7 +24,7 @@ struct Outcome {
 #[wasm_bindgen]
 pub fn execute(src: Vec<u8>) -> JsValue {
     let mut stdout = String::new();
-    let Ok(elysia) = Elysia::load(&mut src.as_slice()) else {
+    let Ok(iii) = III::load(&mut src.as_slice()) else {
         let outcome = Outcome {
             stdout,
             result: "Elysia: failed to load\n".to_string(),
@@ -34,7 +33,7 @@ pub fn execute(src: Vec<u8>) -> JsValue {
         return serde_wasm_bindgen::to_value(&outcome).unwrap_or(JsValue::NULL);
     };
 
-    let outcome = match elysia.exec(Object::List([].into()), &mut stdout) {
+    let outcome = match iii.exec(Object::List([].into()), &mut stdout) {
         Ok(obj) => Outcome {
             stdout,
             result: obj.to_string(),

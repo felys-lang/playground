@@ -52,6 +52,7 @@ fn main(args) {
 
 export const grouping = `group Vec3(x, y, z);
 
+// methods are not zero-cost abstraction because of dynamic typing
 impl Vec3 {
     fn new(x, y, z) {
         Vec3(x, y, z)
@@ -131,8 +132,8 @@ fn main(args) {
 }
 `;
 
-export const beloved = `// this progamming language is a tribute to Elysia and Cyrene
-// 致以爱莉希雅与昔涟的编程语言，以下彩蛋便是整个项目的意义所在
+export const beloved = `// a programming language because of Elysia and Cyrene
+// 因爱莉希雅与昔涟而存在的编程语言，以下彩蛋便是整个项目的意义所在
 fn main(args) {
     elysia = std::pink::elysia();
     cyrene = std::pink::cyrene();
