@@ -132,6 +132,28 @@ fn main(args) {
 }
 `;
 
+export const tensor = `// the full neural network library is coming back soon!
+fn softmax(x) {
+    exp = std::nn::exp(x);
+    lower = std::nn::sum(exp, [1], true);
+    exp / lower
+}
+
+fn main(args) {
+    x = std::nn::tensor([
+        [0.4, 1.4],
+        [3.2, 2.3],
+        [2.6, 0.1],
+    ]);
+    w = std::nn::tensor([
+        [1.9, 3.3],
+        [2.2, 3.7],
+    ]);
+    b = std::nn::tensor([2.1, 0.2]);
+    softmax(x @ w + b)
+}
+`;
+
 export const beloved = `// a programming language because of Elysia and Cyrene
 // 因爱莉希雅与昔涟而存在的编程语言，以下彩蛋便是整个项目的意义所在
 fn main(args) {

@@ -9,6 +9,7 @@ import {
   hoyoverse,
   playground,
   quickstart,
+  tensor,
 } from "./sample";
 
 export type Codebase = {
@@ -52,6 +53,12 @@ export default function Home() {
       {
         name: "hoyoverse.fs",
         code: hoyoverse,
+        binary: undefined,
+        outcome: undefined,
+      },
+      {
+        name: "tensor.fs",
+        code: tensor,
         binary: undefined,
         outcome: undefined,
       },
