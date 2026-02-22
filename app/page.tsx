@@ -9,7 +9,7 @@ import {
   hoyoverse,
   playground,
   quickstart,
-  tensor,
+  iris,
 } from "./sample";
 
 export type Codebase = {
@@ -57,8 +57,8 @@ export default function Home() {
         outcome: undefined,
       },
       {
-        name: "tensor.fs",
-        code: tensor,
+        name: "iris.fs",
+        code: iris,
         binary: undefined,
         outcome: undefined,
       },
